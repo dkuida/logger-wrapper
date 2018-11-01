@@ -1,0 +1,31 @@
+{
+  "name": "@dkuida/logger-wrapper",
+  "version": "1.4.6",
+  "description": "commodity wrapper ",
+  "main": "bin/logger.js",
+  "scripts": {
+    "test": "jasmine JASMINE_CONFIG_PATH=spec/support/jasmine.json",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "logger"
+  ],
+  "author": "Dan Kuida",
+  "bugs": {
+    "url": "https://github.com/dkuida/logger-wrapper"
+  },
+  "homepage": "https://github.com/dkuida/logger-wrapper#readme",
+  "dependencies": {
+    "winston": "^3.1.0",
+    "winston-logstash-transport": "^2.0.0",
+    "winston-logzio": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "jasmine": "^2.4.1",
+    "proxyquire": "^2.1.0"
+  }
+}

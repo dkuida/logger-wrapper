@@ -1,0 +1,16 @@
+pipeline:
+  build:
+    image: node:8.11.3
+    commands:
+    - npm install
+    - npm run lint
+    - npm run test
+  npm:
+    image: plugins/npm
+    username: ${NPM_USERNAME}
+    password: ${NPM_PASSWORD}
+    secrets: [npm_username, npm_password]
+    when:
+      event: tag
+
+
