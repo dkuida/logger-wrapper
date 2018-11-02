@@ -5,9 +5,12 @@ const LogzioWinstonTransport = require('winston-logzio');
 const path = require('path');
 const {LogstashTransport} = require('winston-logstash-transport');
 
-const getLabel = function (callingModule) {
-    const parts = callingModule.filename.split(path.sep);
-    return parts[parts.length - 2] + '/' + parts.pop();
+const getLabel = function (labelObject) {
+    if (labelObject.hasOwnProperty('filename')) {
+        const parts = labelObject.filename.split(path.sep);
+        return parts[parts.length - 2] + '/' + parts.pop();
+    }
+    return labelObject;
 };
 
 function buildLogger (config) {
