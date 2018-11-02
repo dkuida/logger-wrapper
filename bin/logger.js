@@ -13,6 +13,18 @@ const getLabel = function (labelObject) {
     return labelObject;
 };
 
+const levelsCustom = {
+    colors: {
+        fatal: 'red',
+        error: 'magenta',
+        warn: 'grey',
+        info: 'green',
+        debug: 'blue'
+    }
+};
+
+winston.addColors(levelsCustom.colors);
+
 function buildLogger (config) {
     const transportsProviders = [];
     if (config.hasOwnProperty('file')) {
