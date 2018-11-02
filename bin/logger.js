@@ -96,7 +96,7 @@ function getLogger (invokingModule, config) {
     const wrappedLogger = {};
     ['debug', 'info', 'warn', 'error', 'fatal'].forEach(level => {
         wrappedLogger[level] = (textLog, userMeta) => {
-            let meta = {file: fileName};
+            let meta = {invocationLocation: fileName};
             if (typeof userMeta === Object) {
                 meta = Object.assign(meta, userMeta);
             }
