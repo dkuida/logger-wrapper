@@ -7,9 +7,9 @@ pipeline:
     - npm run test
   npm:
     image: plugins/npm
-    username: ${NPM_USERNAME}
-    password: ${NPM_PASSWORD}
-    secrets: [npm_username, npm_password]
+    token: ${NPM_TOKEN}
+    email: dan@kuida.org
+    secrets: [npm_token]
     when:
       event: tag
 
