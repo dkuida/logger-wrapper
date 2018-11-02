@@ -1,6 +1,6 @@
 {
   "name": "@dkuida/logger-wrapper",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "commodity wrapper ",
   "main": "bin/logger.js",
   "scripts": {
