@@ -1,5 +1,3 @@
-'use strict';
-
 const proxyquire = require('proxyquire');
 
 const loggerMock = jasmine.createSpyObj('logger', ['debug', 'fatal', 'info', 'log']);

@@ -11,7 +11,7 @@ module.exports = {
         maxSize: 5242880,
         maxFiles: 5
     },
-    logstash: {
+    'logstashudp': {
         level: 'debug',
         nodeName: 'test',
         host: '',

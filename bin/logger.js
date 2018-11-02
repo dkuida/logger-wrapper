@@ -45,14 +45,15 @@ function buildLogger (config) {
             host: config.logzio.host
         }));
     }
-    if (config.hasOwnProperty('logstash-udp')) {
+    if (config.hasOwnProperty('logstashudp')) {
+        const loggerConfig = config.logstashudp;
         transportsProviders.push(new LogstashTransport({
             label: config.service,
             timestamp: true,
-            level: config.logstash.level,
-            port: config.logstash.port,
-            node_name: config.logstash.nodeName,
-            host: config.logstash.host,
+            level: loggerConfig.level,
+            port: loggerConfig.port,
+            node_name: loggerConfig.nodeName,
+            host: loggerConfig.host,
             json: true
         }));
     }
