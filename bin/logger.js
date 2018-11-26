@@ -79,7 +79,7 @@ function buildLogger (config) {
 }
 
 function writeLog (logger, level, originalMessage, meta) {
-    if (typeof originalMessage === Error || originalMessage.hasOwnProperty('stack')) {
+    if (typeof originalMessage === Error || (originalMessage && originalMessage.hasOwnProperty('stack'))) {
         const allInfo = winston.exceptions.getAllInfo(originalMessage);
         logger.log(level, allInfo, meta);
         return allInfo;
