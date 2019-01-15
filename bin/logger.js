@@ -6,7 +6,7 @@ const path = require('path');
 const {LogstashTransport} = require('winston-logstash-transport');
 
 const getLabel = function (labelObject) {
-    if (labelObject.hasOwnProperty('filename')) {
+    if (labelObject && labelObject.hasOwnProperty('filename')) {
         const parts = labelObject.filename.split(path.sep);
         return parts[parts.length - 2] + '/' + parts.pop();
     }
@@ -97,7 +97,7 @@ function getLogger (invokingModule, config) {
     ['debug', 'info', 'warn', 'error', 'fatal'].forEach(level => {
         wrappedLogger[level] = (textLog, userMeta) => {
             let meta = {invocationLocation: fileName};
-            if (typeof userMeta === Object) {
+            if ((typeof userMeta) === 'object') {
                 meta = Object.assign(meta, userMeta);
             }
             return writeLog(logger, level, textLog, meta);
