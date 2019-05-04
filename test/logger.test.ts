@@ -1,31 +1,39 @@
-const proxyquire = require('proxyquire');
-
-const loggerMock = jasmine.createSpyObj('logger', ['debug', 'fatal', 'info', 'log']);
+import * as winston from 'winston';
+const loggerConfig = require('./config/logger');
+const loggerMock = {
+    log: jest.fn()
+};
 const winstonMock = {
+    ...winston,
     createLogger: function () {
         return loggerMock;
     }
 };
-const loggerBuilder = proxyquire('../bin/logger', {
-    'winston': winstonMock
-});
-const loggerConfig = require('./config/logger');
+jest.mock('winston', () => (winstonMock));
+
+
+
+import loggerBuilder from '../src/logger';
+
+
 const loggerInstance = loggerBuilder(loggerConfig);
+
 
 const logger = loggerInstance(module);
 
 
 describe('Logger Required', function () {
     beforeEach(() => {
-        loggerMock.log.calls.reset();
+        loggerMock.log.mockClear();
     });
     it('expect logger called', function () {
         /**arrange*/
         /**act*/
+        console.log(logger)
         logger.info('HELLO');
         /**assert*/
         expect(loggerMock.log).toHaveBeenCalled();
-        expect(loggerMock.log).toHaveBeenCalledWith('info', jasmine.anything(), jasmine.anything());
+        expect(loggerMock.log).toHaveBeenCalledWith('info', expect.anything(), expect.anything());
     });
     it('', function () {
         /**arrange*/
@@ -33,6 +41,6 @@ describe('Logger Required', function () {
         logger.fatal('FATAL');
         /**assert*/
         expect(loggerMock.log).toHaveBeenCalled();
-        expect(loggerMock.log).toHaveBeenCalledWith('fatal', jasmine.anything(), jasmine.anything());
+        expect(loggerMock.log).toHaveBeenCalledWith('fatal', expect.anything(), expect.anything());
     });
 });
