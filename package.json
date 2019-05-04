@@ -2,7 +2,7 @@
   "name": "@dkuida/logger-wrapper",
   "version": "1.4.23",
   "description": "commodity wrapper ",
-  "main": "src/logger.js",
+  "main": "dist/logger.js",
   "scripts": {
     "test": "jest --coverage --forceExit --detectOpenHandles",
     "lint": "tslint -p tsconfig.json",
