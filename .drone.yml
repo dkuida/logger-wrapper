@@ -1,31 +1,35 @@
-pipeline:
-  restore-cache:
-    image: drillster/drone-volume-cache
+kind: pipeline
+name: default
+
+
+steps:
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  settings:
     restore: true
     mount:
-    - ./node_modules
+      - ./node_modules
     volumes:
-    - /tmp/cache:/cache
-  build:
-    image: node:8.11.3
-    commands:
+      - /tmp/cache:/cache
+- name: build
+  image: node:11.10.0
+  commands:
     - npm install
     - npm run lint
     - npm run test
-  rebuild-cache:
-    image: drillster/drone-volume-cache
+- name: rebuild-cache
+  image: drillster/drone-volume-cache
+  settings:
     rebuild: true
     ttl: 7
     mount:
-    - ./node_modules
+      - ./node_modules
     volumes:
-    - /tmp/cache:/cache
-  npm:
-    image: plugins/npm
-    token: ${NPM_TOKEN}
-    email: dan@kuida.org
-    secrets: [npm_token]
-    when:
-      event: tag
-
-
+      - /tmp/cache:/cache
+- name: npm
+  image: plugins/npm
+  token:
+    from_secret: npm_token
+  email: dan@kuida.org
+  when:
+    event: tag
