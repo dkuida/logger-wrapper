@@ -2,10 +2,20 @@
   "name": "@dkuida/logger-wrapper",
   "version": "1.4.21",
   "description": "commodity wrapper ",
-  "main": "bin/logger.js",
+  "main": "src/logger.js",
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=spec/support/jasmine.json",
-    "lint": "eslint ."
+    "test": "jest --coverage --forceExit --detectOpenHandles",
+    "lint": "tslint -p tsconfig.json",
+    "lint:fix": "tslint -p tsconfig.json --fix",
+    "clean": "rimraf dist/*",
+    "compile": "npm run clean && npm run tsc",
+    "tsc": "tsc",
+    "ts:watch": "tsc --watch",
+    "preversion": "npm run lint && npm run tsc && npm run test && npm run test:integ",
+    "postversion": "git push && git push --follow-tags",
+    "deploy": "npm version patch -m \"Release v%s\" && npm publish",
+    "build": "npm run clean && npm run tsc && npm run copy-types",
+    "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist"
   },
   "keywords": [
     "logger"
@@ -23,16 +33,55 @@
   },
   "homepage": "https://github.com/dkuida/logger-wrapper#readme",
   "dependencies": {
-    "winston": "^3.1.0",
-    "winston-logstash-transport": "^2.0.0",
-    "winston-logzio": "^3.0.2"
+    "winston": "^3.2.1",
+    "@dkuida/winston-logstash": "^0.4.1"
   },
   "engines": {
     "node": ">=8.0.0"
   },
+  "pre-commit": [
+    "lint",
+    "tsc",
+    "test"
+  ],
   "devDependencies": {
-    "eslint": "^5.6.1",
-    "jasmine": "^2.4.1",
-    "proxyquire": "^2.1.0"
+    "rimraf": "^2.6.2",
+    "copyfiles": "^1.2.0",
+    "pre-commit": "^1.2.2",
+    "@types/node": "^8.10.48",
+    "@types/jest": "^24.0.12",
+    "jest": "^24.7.1",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5",
+    "tslint-eslint-rules": "^5.4.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "jest-cli": "^24.7.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "rootDir": "./test",
+    "roots": [
+      "../test"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": ".*\\.(test|spec).(ts|js)$",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "./tsconfig.json"
+      }
+    },
+    "setupFiles": [],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
