@@ -13,6 +13,7 @@
     "ts:watch": "tsc --watch",
     "preversion": "npm run lint && npm run tsc && npm run test && npm run test:integ",
     "postversion": "git push && git push --follow-tags",
+    "deploy": "npm version patch -m \"Release v%s\" && npm publish",
     "build": "npm run clean && npm run tsc && npm run copy-types",
     "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist"
   },
