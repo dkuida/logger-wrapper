@@ -11,18 +11,11 @@ module.exports = {
         maxSize: 5242880,
         maxFiles: 5
     },
-    'logstashudp': {
+    logstash: {
         level: 'debug',
         nodeName: 'test',
         host: '',
         port: 27010
-    },
-    logzio: {
-        name: 'logz-io',
-        level: 'error',
-        token: '',
-        host: 'listener.logz.io',
-        type: 'log-test'
     }
 };
 

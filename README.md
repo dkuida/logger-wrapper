@@ -39,6 +39,11 @@ const logger = loggerInstance(module);
 logger.info('HELLO');
 ```
 
+## Breaking changes
+
+* the logger is not exported as default from teh library
+* fatal level does not exist
+
 ## License
 
 The MIT License (MIT)
