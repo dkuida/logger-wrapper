@@ -4,8 +4,8 @@
   "description": "commodity wrapper ",
   "main": "src/logger.js",
   "scripts": {
-    "lint": "tslint -p tsconfig.json",
     "test": "jest --coverage --forceExit --detectOpenHandles",
+    "lint": "tslint -p tsconfig.json",
     "lint:fix": "tslint -p tsconfig.json --fix",
     "clean": "rimraf dist/*",
     "compile": "npm run clean && npm run tsc",
@@ -36,7 +36,13 @@
   "engines": {
     "node": ">=8.0.0"
   },
+  "pre-commit": [
+    "lint",
+    "tsc",
+    "test"
+  ],
   "devDependencies": {
+    "pre-commit": "^1.2.2",
     "@types/node": "^8.10.48",
     "@types/jest": "^24.0.12",
     "jest": "^24.7.1",

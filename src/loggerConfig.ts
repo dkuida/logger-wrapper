@@ -6,7 +6,7 @@ export enum LogLevel {
     verbose = 'verbose',
     debug =  'debug',
     silly =  'silly'
-};
+}
 
 interface LoggerCommonProps {
     level: LogLevel;
@@ -18,8 +18,8 @@ interface FileLoggerConfig extends LoggerCommonProps{
     maxSize: number;
     path: string;
 
-
 }
+// tslint:disable-next-line:no-empty-interface
 interface ConsoleLoggerConfig extends LoggerCommonProps{
 
 }

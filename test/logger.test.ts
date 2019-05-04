@@ -1,38 +1,27 @@
+/* tslint:disable: only-arrow-functions object-literal-shorthand */
+const transportsMock = {
+    Console: function() {
+        return consoleLoggerMock;
+    }
+};
+/* tslint:enable: only-arrow-functions object-literal-shorthand */
 import * as winston from 'winston';
-const loggerConfig = require('./config/logger');
-// const loggerMock = {
-//     log: jest.fn()
-// };
+import  loggerConfig = require('./config/logger');
 
 const consoleLoggerMock = {
     log: jest.fn(),
-    on : jest.fn()
+    on: jest.fn()
 };
 
-const transportsMock = {
-   Console: function () {
-       return consoleLoggerMock;
-   }
-};
-
-const winstonMock = {
-    ...winston,
-    transports: transportsMock
-};
-jest.mock('winston', () => (winstonMock));
-
-
-
+// @ts-ignore
+winston.transports = transportsMock;
 import loggerBuilder from '../src/logger';
-
 
 const loggerInstance = loggerBuilder(loggerConfig);
 
-
 const logger = loggerInstance(module);
 
-
-describe('Console logger', function () {
+describe('Console logger', () => {
     beforeEach(() => {
         consoleLoggerMock.log.mockClear();
     });
@@ -45,26 +34,29 @@ describe('Console logger', function () {
         expect(logger.silly).toBeDefined();
     });
     it('expect logger called', () => {
-        /**arrange*/
-        /**act*/
+        // arrange
+        // act
         logger.info('HELLO');
-        /**assert*/
+        // assert
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', '[test/logger.test.js] HELLO', expect.anything(), expect.anything());
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', expect.stringContaining('HELLO'),
+                expect.anything(), expect.anything());
     });
     it('object passed', () => {
-        /**arrange*/
-        /**act*/
+        // arrange
+        // act
         logger.info('%o', {foo: 'bar'});
-        /**assert*/
-        // expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', '[test/logger.test.js] { foo: \'bar\' }', expect.anything() , expect.anything());
+        // assert
+        expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', expect.stringContaining('{ foo: \'bar\' }'),
+                expect.anything(), expect.anything());
     });
     it('expect error to be handled', () => {
         logger.error(new Error('foo'));
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('error', '[test/logger.test.js] foo', expect.objectContaining({
-            stack: expect.anything()
-        }), expect.anything());
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith('error', expect.stringContaining('foo'),
+                expect.objectContaining({
+                    stack: expect.anything()
+                }), expect.anything());
     });
 });

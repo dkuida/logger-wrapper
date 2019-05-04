@@ -1,15 +1,13 @@
 import * as winston from 'winston';
-import {Logger} from 'winston';
-
 import * as path from 'path';
 import {LogstashTransport} from 'dkuida-winston-logstash';
 import {LoggerConfig} from './loggerConfig';
 import Module = NodeJS.Module;
 
 const {createLogger, transports, format} = winston;
-const {combine, timestamp, label, prettyPrint, errors, json, colorize, simple, splat} = format;
+const {combine, timestamp, label,  errors, json, colorize, splat} = format;
 
-const getLabel = function(labelObject: Module): string {
+const getLabel = (labelObject: Module): string => {
     try {
         if (labelObject && labelObject.hasOwnProperty('filename')) {
             const parts = labelObject.filename.split(path.sep);
@@ -26,32 +24,33 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
     if (config.console) {
         const consoleConfig = config.console;
         transportsProviders.push(new transports.Console({
-            level: <any> consoleConfig.level,
-            handleExceptions: consoleConfig.handleExceptions !== false
+            handleExceptions: consoleConfig.handleExceptions !== false,
+            level: <any> consoleConfig.level
         }));
     }
     if (config.file) {
         const fileConfig = config.file;
         transportsProviders.push(new transports.File({
-            level: <any> fileConfig.level,
-            handleExceptions: fileConfig.handleExceptions !== false,
             filename: fileConfig.path,
-            maxsize: fileConfig.maxSize,
-            maxFiles: fileConfig.maxFiles
+            handleExceptions: fileConfig.handleExceptions !== false,
+            level: <any> fileConfig.level,
+            maxFiles: fileConfig.maxFiles,
+            maxsize: fileConfig.maxSize
         }));
     }
     if (config.logstash) {
         const loggerConfig = config.logstash;
         transportsProviders.push(new LogstashTransport({
-            label: config.service,
             handleExceptions: loggerConfig.handleExceptions !== false,
+            host: loggerConfig.host,
+            label: config.service,
             level: loggerConfig.level,
-            port: loggerConfig.port,
             node_name: loggerConfig.nodeName,
-            host: loggerConfig.host
+            port: loggerConfig.port
         }));
     }
     return createLogger({
+        exitOnError: false,
         format: combine(
                 label({label: fileName, message: true}),
                 errors({stack: true}),
@@ -60,12 +59,11 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
                 json(),
                 splat()
         ),
-        transports: transportsProviders,
-        exitOnError: false
+        transports: transportsProviders
     });
 }
 
-function getLogger(invokingModule: Module, config: LoggerConfig): Logger {
+function getLogger(invokingModule: Module, config: LoggerConfig): winston.Logger {
     const fileName = getLabel(invokingModule);
     return buildLogger(config, fileName);
 }
