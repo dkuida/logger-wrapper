@@ -6,7 +6,7 @@ const transportsMock = {
 };
 /* tslint:enable: only-arrow-functions object-literal-shorthand */
 import * as winston from 'winston';
-import  loggerConfig = require('./config/logger');
+import * as loggerConfig from './config/logger';
 
 const consoleLoggerMock = {
     log: jest.fn(),
