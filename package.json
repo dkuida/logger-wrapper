@@ -31,8 +31,7 @@
   "homepage": "https://github.com/dkuida/logger-wrapper#readme",
   "dependencies": {
     "winston": "^3.2.1",
-    "winston-logstash-transport": "^2.0.0",
-    "winston-logzio": "^5.0.0"
+    "winston-logstash": "^0.4.0"
   },
   "engines": {
     "node": ">=8.0.0"

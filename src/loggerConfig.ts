@@ -1,10 +1,10 @@
-type LogLevel = {
-    error: 0,
-    warn: 1,
-    info: 2,
-    verbose: 3,
-    debug: 4,
-    silly: 5
+export enum LogLevel {
+    error =  'error',
+    warn =  'warn',
+    info =  'info',
+    verbose = 'verbose',
+    debug =  'debug',
+    silly =  'silly'
 };
 
 interface LoggerRequiredProps {
