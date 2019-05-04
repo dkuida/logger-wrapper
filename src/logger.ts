@@ -7,7 +7,7 @@ import {LoggerConfig} from './loggerConfig';
 import Module = NodeJS.Module;
 
 const {createLogger, transports, format} = winston;
-const {combine, timestamp, label, prettyPrint, errors, json, colorize} = format;
+const {combine, timestamp, label, prettyPrint, errors, json, colorize, simple, splat} = format;
 
 const getLabel = function(labelObject: Module): string {
     try {
@@ -20,26 +20,6 @@ const getLabel = function(labelObject: Module): string {
         return 'failed to get filename';
     }
 };
-
-const levelsForBackWardsCompatibility = {
-    fatal: 0,
-    error: 0,
-    warn: 1,
-    info: 2,
-    verbose: 3,
-    debug: 4,
-    silly: 5
-};
-const colorsForBackWardsCompatibility = {
-    fatal: 'red',
-    error: 'red',
-    warn: 'yellow',
-    info: 'blue',
-    verbose: 'cyan',
-    debug: 'green',
-    silly: 'grey'
-};
-winston.addColors(colorsForBackWardsCompatibility);
 
 function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
     const transportsProviders = [];
@@ -77,10 +57,9 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
                 errors({stack: true}),
                 colorize(),
                 timestamp(),
-                prettyPrint(),
-                json()
+                json(),
+                splat()
         ),
-        levels: levelsForBackWardsCompatibility,
         transports: transportsProviders,
         exitOnError: false
     });

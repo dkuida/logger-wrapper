@@ -52,13 +52,13 @@ describe('Console logger', function () {
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
         expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', '[test/logger.test.js] HELLO', expect.anything(), expect.anything());
     });
-    it('fatal level exists', () => {
+    it('object passed', () => {
         /**arrange*/
         /**act*/
-        (<any> logger).fatal('HELLO');
+        logger.info('%o', {foo: 'bar'});
         /**assert*/
-        expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('fatal', '[test/logger.test.js] HELLO', expect.anything(), expect.anything());
+        // expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', '[test/logger.test.js] { foo: \'bar\' }', expect.anything() , expect.anything());
     });
     it('expect error to be handled', () => {
         logger.error(new Error('foo'));
