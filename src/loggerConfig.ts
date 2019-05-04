@@ -1,4 +1,5 @@
 export enum LogLevel {
+    fatal =  'fatal',
     error =  'error',
     warn =  'warn',
     info =  'info',
@@ -7,32 +8,25 @@ export enum LogLevel {
     silly =  'silly'
 };
 
-interface LoggerRequiredProps {
+interface LoggerCommonProps {
     level: LogLevel;
+    handleExceptions?: boolean;
 }
 
-interface FileLoggerConfig extends LoggerRequiredProps{
+interface FileLoggerConfig extends LoggerCommonProps{
     maxFiles: number;
     maxSize: number;
     path: string;
 
-}
-interface ConsoleLoggerConfig extends LoggerRequiredProps{
 
 }
-interface LogzioLoggerConfig extends LoggerRequiredProps{
-    host: string;
-    token: string;
+interface ConsoleLoggerConfig extends LoggerCommonProps{
 
 }
-interface LogstashUdpLoggerConfig extends LoggerRequiredProps{
+interface LogstashTcpLoggerConfig extends LoggerCommonProps{
     host: string;
     nodeName: string;
     port: number;
-
-}
-interface LogstashTcpLoggerConfig extends LoggerRequiredProps{
-
 }
 
 export interface LoggerConfig {
@@ -41,6 +35,4 @@ export interface LoggerConfig {
     console?: ConsoleLoggerConfig;
     file?: FileLoggerConfig;
     logstash?: LogstashTcpLoggerConfig;
-    logstashudp?: LogstashUdpLoggerConfig;
-    logzio?: LogzioLoggerConfig;
 }
