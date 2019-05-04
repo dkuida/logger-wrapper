@@ -1,6 +1,6 @@
 import * as winston from 'winston';
 import * as path from 'path';
-import {LogstashTransport} from 'dkuida-winston-logstash';
+import {LogstashTransport} from '@dkuida/winston-logstash';
 import {LoggerConfig} from './loggerConfig';
 import Module = NodeJS.Module;
 

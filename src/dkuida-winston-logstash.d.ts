@@ -1,1 +1,1 @@
-declare module 'dkuida-winston-logstash';
+declare module '@dkuida/winston-logstash';
