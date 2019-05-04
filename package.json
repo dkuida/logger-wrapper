@@ -4,6 +4,8 @@
   "description": "commodity wrapper ",
   "main": "dist/logger.js",
   "scripts": {
+    "build": "npm run clean && npm run tsc && npm run copy-types",
+    "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist",
     "test": "jest --coverage --forceExit --detectOpenHandles",
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "tslint -p tsconfig.json --fix",
@@ -13,9 +15,7 @@
     "ts:watch": "tsc --watch",
     "preversion": "npm run lint && npm run tsc && npm run test",
     "postversion": "git push && git push --follow-tags",
-    "deploy": "npm version patch -m \"Release v%s\" && npm publish",
-    "build": "npm run clean && npm run tsc && npm run copy-types",
-    "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist"
+    "deploy": "npm version patch -m \"Release v%s\" && npm publish"
   },
   "keywords": [
     "logger"
@@ -34,7 +34,7 @@
   "homepage": "https://github.com/dkuida/logger-wrapper#readme",
   "dependencies": {
     "winston": "^3.2.1",
-    "@dkuida/winston-logstash": "^0.4.1"
+    "@dkuida/winston-logstash": "^0.5.1"
   },
   "engines": {
     "node": ">=8.0.0"
