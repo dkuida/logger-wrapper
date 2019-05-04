@@ -12,7 +12,9 @@
     "tsc": "tsc",
     "ts:watch": "tsc --watch",
     "preversion": "npm run lint && npm run tsc && npm run test && npm run test:integ",
-    "postversion": "git push && git push --follow-tags"
+    "postversion": "git push && git push --follow-tags",
+    "build": "npm run clean && npm run tsc && npm run copy-types",
+    "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist"
   },
   "keywords": [
     "logger"
@@ -42,6 +44,8 @@
     "test"
   ],
   "devDependencies": {
+    "rimraf": "^2.6.2",
+    "copyfiles": "^1.2.0",
     "pre-commit": "^1.2.2",
     "@types/node": "^8.10.48",
     "@types/jest": "^24.0.12",
