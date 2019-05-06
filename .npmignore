@@ -1,6 +1,7 @@
 .idea
 test
 src
+dist/example/**/*
 **/coverage/**/*
 .drone.yml
 wallaby.js

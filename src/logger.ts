@@ -5,7 +5,7 @@ import {LoggerConfig} from './loggerConfig';
 import Module = NodeJS.Module;
 
 const {createLogger, transports, format} = winston;
-const {combine, timestamp, label,  errors, json, colorize, splat} = format;
+const {combine, timestamp, label,  errors, json, simple, colorize, splat} = format;
 
 const getLabel = (labelObject: Module): string => {
     try {
@@ -24,6 +24,14 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
     if (config.console) {
         const consoleConfig = config.console;
         transportsProviders.push(new transports.Console({
+            format: combine(
+                    colorize({all: true}),
+                    timestamp(),
+                    label({label: fileName, message: true}),
+                    errors({stack: true}),
+                    simple(),
+                    splat()
+            ),
             handleExceptions: consoleConfig.handleExceptions !== false,
             level: <any> consoleConfig.level
         }));
@@ -52,10 +60,9 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
     return createLogger({
         exitOnError: false,
         format: combine(
+                timestamp(),
                 label({label: fileName, message: true}),
                 errors({stack: true}),
-                colorize(),
-                timestamp(),
                 json(),
                 splat()
         ),

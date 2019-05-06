@@ -5,6 +5,7 @@
   "main": "dist/logger.js",
   "scripts": {
     "build": "npm run clean && npm run tsc && npm run copy-types",
+    "example": "node ./dist/example/app.js",
     "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist",
     "test": "jest --coverage --forceExit --detectOpenHandles",
     "lint": "tslint -p tsconfig.json",

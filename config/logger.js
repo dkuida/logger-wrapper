@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
     service: 'some-service',
     console: {
@@ -11,11 +9,10 @@ module.exports = {
         maxSize: 5242880,
         maxFiles: 5
     },
-    logstash: {
-        level: 'debug',
-        nodeName: 'test',
-        host: '',
-        port: 27010
-    }
+    // logstash: {
+    //     level: 'debug',
+    //     nodeName: 'test',
+    //     host: '',
+    //     port: 27010
+    // }
 };
-
