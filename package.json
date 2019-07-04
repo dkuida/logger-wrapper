@@ -16,7 +16,9 @@
     "ts:watch": "tsc --watch",
     "preversion": "npm run lint && npm run tsc && npm run test",
     "postversion": "git push && git push --follow-tags",
-    "deploy": "npm run build && npm version patch -m \"Release v%s\" && npm publish"
+    "deploy": "npm run build && npm version patch -m \"Release v%s\" && npm publish",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "logger"
@@ -35,7 +37,8 @@
   "homepage": "https://github.com/dkuida/logger-wrapper#readme",
   "dependencies": {
     "winston": "^3.2.1",
-    "@dkuida/winston-logstash": "^0.5.1"
+    "@dkuida/winston-logstash": "^0.5.1",
+    "snyk": "^1.189.0"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -84,5 +87,6 @@
       "json",
       "node"
     ]
-  }
+  },
+  "snyk": true
 }
