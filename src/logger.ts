@@ -31,7 +31,7 @@ const getLabel = (labelObject: Loggable, labelExtractors: LabelExtractor[]): str
     }
 };
 
-function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
+function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logger {
     const transportsProviders = [];
     if (config.console) {
         const consoleConfig = config.console;
@@ -39,7 +39,7 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             format: combine(
                     colorize({all: true}),
                     timestamp(),
-                    label({label: fileName, message: true}),
+                    label({label: instanceLabel, message: true}),
                     errors({stack: true}),
                     simple(),
                     splat()
@@ -58,11 +58,22 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             maxsize: fileConfig.maxSize
         }));
     }
+    const baseLogger = createLogger({
+        exitOnError: false,
+        format: combine(
+                timestamp(),
+                label({label: instanceLabel, message: true}),
+                errors({stack: true}),
+                json(),
+                splat()
+        ),
+        transports: transportsProviders
+    });
     if (config.logstash) {
         const loggerConfig = config.logstash;
         import ('@dkuida/winston-logstash').then((transport) => {
             const logstashTransport = transport.default;
-            transportsProviders.push(new logstashTransport({
+            baseLogger.add(new logstashTransport({
                 handleExceptions: loggerConfig.handleExceptions !== false,
                 host: loggerConfig.host,
                 label: config.service,
@@ -72,22 +83,20 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             }));
         });
     }
-    return createLogger({
-        exitOnError: false,
-        format: combine(
-                timestamp(),
-                label({label: fileName, message: true}),
-                errors({stack: true}),
-                json(),
-                splat()
-        ),
-        transports: transportsProviders
-    });
+    if (config.fluentd){
+        import('fluent-logger').then((fluentLib) => {
+            const fluentTransport = fluentLib.support.winstonTransport();
+            const fluent = new fluentTransport(instanceLabel, config.fluentd!);
+            baseLogger.add(fluent);
+        });
+    }
+
+    return baseLogger;
 }
 
 function getLogger(invokingModule: Loggable, config: LoggerConfig): winston.Logger {
-    const fileName = getLabel(invokingModule, config.labelExtractors || []);
-    return buildLogger(config, fileName);
+    const instanceLabel = getLabel(invokingModule, config.labelExtractors || []);
+    return buildLogger(config, instanceLabel);
 }
 
 const logger = (config: any) => (module: Loggable) => {

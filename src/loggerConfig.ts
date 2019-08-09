@@ -1,3 +1,5 @@
+import { Options } from 'fluent-logger';
+
 export enum LogLevel {
     fatal =  'fatal',
     error =  'error',
@@ -39,5 +41,6 @@ export interface LoggerConfig {
     console?: ConsoleLoggerConfig;
     file?: FileLoggerConfig;
     logstash?: LogstashTcpLoggerConfig;
+    fluentd?: Options;
     labelExtractors?: LabelExtractor[];
 }
