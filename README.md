@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.com/dkuida/logger-wrapper.svg?branch=master)](https://travis-ci.com/dkuida/logger-wrapper)
 # wrapper for winston configuration loader
 
 ## Build Setup
@@ -18,12 +18,15 @@ check the example folder
 the config file will initialize the availbale transports by passing the configuration to each 
 
 * console - official winston console
+
 * file - official winston file logger
+
 * fluentd - using [fluent-logger](https://github.com/fluent/fluent-logger-node)
+
 * logstash - have a look at [winston-logstash-transport](https://github.com/dkuida/winston-logstash)
+
 * service - a common name that will be identify the project/service
 create a singleton loader in the form of 
-
 
 ```typescript
  import logger from '@dkuida/logger-wrapper';
@@ -31,7 +34,6 @@ create a singleton loader in the form of
  const loggerInstance = logger(loggerConfig);
  
  export default loggerInstance;
-
 ```
 
 use the logger wherever you need
