@@ -5,7 +5,7 @@ module.exports = {
     },
     file: {
         level: 'debug',
-        path: './logs/json-server.log',
+        path: './logs/server.log',
         maxSize: 5242880,
         maxFiles: 5
     },
@@ -14,5 +14,14 @@ module.exports = {
     //     nodeName: 'test',
     //     host: '',
     //     port: 27010
-    // }
+    // },
+    fluentd: {
+        level: 'debug',
+
+        host: '192.168.2.2',
+        port: 31240,
+        timeout: 3.0,
+        reconnectInterval: 600000 // 10 minutes
+
+    }
 };
