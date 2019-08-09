@@ -17,9 +17,8 @@ module.exports = {
     // },
     fluentd: {
         level: 'debug',
-
         host: '192.168.2.2',
-        port: 31240,
+        port: 31811,
         timeout: 3.0,
         reconnectInterval: 600000 // 10 minutes
 

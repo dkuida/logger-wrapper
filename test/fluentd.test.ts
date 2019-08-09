@@ -1,5 +1,4 @@
-// const fluentInstance = ;
-const fluentTransportMock = jest.fn().mockImplementation(() => ({log: jest.fn()}));
+const fluentTransportMock = jest.fn().mockImplementation(() => ({log: jest.fn(), on: jest.fn()}));
 const winstonTransportMock = jest.fn().mockReturnValue(fluentTransportMock);
 jest.mock('fluent-logger', () => ({
     support: {
@@ -18,6 +17,7 @@ describe('fluentd tansport', () => {
     test('config passed', () => {
         expect(winstonTransportMock).toHaveBeenCalledTimes(1);
         expect(fluentTransportMock)
-                .toHaveBeenCalledWith(expect.stringMatching(/test\/fluentd.test.[j|t]s/), {level: 'debug'});
+                .toHaveBeenCalledWith(expect.stringMatching(/test\/fluentd.test.[j|t]s/),
+                        {level: 'debug', requireAckResponse: true});
     });
 });

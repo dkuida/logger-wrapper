@@ -58,7 +58,27 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
             maxsize: fileConfig.maxSize
         }));
     }
-    const baseLogger = createLogger({
+
+    if (config.logstash) {
+        const loggerConfig = config.logstash;
+        const transport = require('@dkuida/winston-logstash');
+        const logstashTransport = transport.default;
+        transportsProviders.push(new logstashTransport({
+            handleExceptions: loggerConfig.handleExceptions !== false,
+            host: loggerConfig.host,
+            label: config.service,
+            level: loggerConfig.level,
+            node_name: loggerConfig.nodeName,
+            port: loggerConfig.port
+        }));
+    }
+    if (config.fluentd){
+        const fluentLib = require('fluent-logger');
+        const fluentTransport = fluentLib.support.winstonTransport();
+        const fluent = new fluentTransport(instanceLabel, {...config.fluentd!,  requireAckResponse: true });
+        transportsProviders.push(fluent);
+    }
+    return createLogger({
         exitOnError: false,
         format: combine(
                 timestamp(),
@@ -69,29 +89,6 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
         ),
         transports: transportsProviders
     });
-    if (config.logstash) {
-        const loggerConfig = config.logstash;
-        import ('@dkuida/winston-logstash').then((transport) => {
-            const logstashTransport = transport.default;
-            baseLogger.add(new logstashTransport({
-                handleExceptions: loggerConfig.handleExceptions !== false,
-                host: loggerConfig.host,
-                label: config.service,
-                level: loggerConfig.level,
-                node_name: loggerConfig.nodeName,
-                port: loggerConfig.port
-            }));
-        });
-    }
-    if (config.fluentd){
-        import('fluent-logger').then((fluentLib) => {
-            const fluentTransport = fluentLib.support.winstonTransport();
-            const fluent = new fluentTransport(instanceLabel, config.fluentd!);
-            baseLogger.add(fluent);
-        });
-    }
-
-    return baseLogger;
 }
 
 function getLogger(invokingModule: Loggable, config: LoggerConfig): winston.Logger {
