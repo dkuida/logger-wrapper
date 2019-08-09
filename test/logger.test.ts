@@ -1,4 +1,4 @@
-import { LabelExtractor } from '../src/loggerConfig';
+import { LabelExtractor } from '../src/types/loggerConfig';
 import * as winston from 'winston';
 /* tslint:disable: only-arrow-functions object-literal-shorthand */
 const transportsMock = {

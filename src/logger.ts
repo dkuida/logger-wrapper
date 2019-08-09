@@ -1,7 +1,7 @@
 import * as winston from 'winston';
 import * as path from 'path';
 
-import { LabelExtractor, LoggerConfig } from './loggerConfig';
+import { LabelExtractor, LoggerConfig } from './types/loggerConfig';
 import { Loggable, MoleculerMeta } from './types/MoleculerMeta';
 import Module = NodeJS.Module;
 
@@ -42,7 +42,7 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
                     label({label: instanceLabel, message: true}),
                     errors({stack: true}),
                     simple(),
-                    splat()
+                    splat(),
             ),
             handleExceptions: consoleConfig.handleExceptions !== false,
             level: <any> consoleConfig.level
