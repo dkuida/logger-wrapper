@@ -3,10 +3,17 @@
     "module": "commonjs",
     "target": "es2017",
     "noImplicitAny": true,
-    "outDir": "./dist",
+    "outDir": "./dist/compiled",
     "sourceMap": true,
     "strictNullChecks": true,
-    "lib": [ "es2017", "es2015", "dom" ],
+    "lib": [
+      "es2018",
+      "es2017",
+      "esnext",
+      "es6",
+
+      "dom"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noUnusedParameters": true,
@@ -14,7 +21,8 @@
 
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "example/**/*.ts"
   ],
   "exclude": [
     "node_modules",

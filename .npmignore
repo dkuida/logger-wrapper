@@ -1,6 +1,7 @@
 .idea
 test
 src
+logs
 dist/example/**/*
 **/coverage/**/*
 .drone.yml

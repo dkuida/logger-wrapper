@@ -1,3 +1,5 @@
+import { Options } from 'fluent-logger';
+
 export enum LogLevel {
     fatal =  'fatal',
     error =  'error',
@@ -20,7 +22,7 @@ interface FileLoggerConfig extends LoggerCommonProps{
 
 }
 // tslint:disable-next-line:no-empty-interface
-interface ConsoleLoggerConfig extends LoggerCommonProps{
+interface ConsoleLoggerConfig extends LoggerCommonProps {
 
 }
 interface LogstashTcpLoggerConfig extends LoggerCommonProps{
@@ -29,10 +31,16 @@ interface LogstashTcpLoggerConfig extends LoggerCommonProps{
     port: number;
 }
 
+export enum LabelExtractor {
+    moleculer= 'moleculer'
+}
+
 export interface LoggerConfig {
     service?: string;
     local?: boolean;
     console?: ConsoleLoggerConfig;
     file?: FileLoggerConfig;
     logstash?: LogstashTcpLoggerConfig;
+    fluentd?: Options;
+    labelExtractors?: LabelExtractor[];
 }

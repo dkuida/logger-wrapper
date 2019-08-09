@@ -1,25 +1,37 @@
 import * as winston from 'winston';
 import * as path from 'path';
-import LogstashTransport from '@dkuida/winston-logstash';
-import {LoggerConfig} from './loggerConfig';
+
+import { LabelExtractor, LoggerConfig } from './types/loggerConfig';
+import { Loggable, MoleculerMeta } from './types/MoleculerMeta';
 import Module = NodeJS.Module;
 
 const {createLogger, transports, format} = winston;
-const {combine, timestamp, label,  errors, json, simple, colorize, splat} = format;
+const {combine, timestamp, label, errors, json, simple, colorize, splat} = format;
 
-const getLabel = (labelObject: Module): string => {
+const getLabel = (labelObject: Loggable, labelExtractors: LabelExtractor[]): string => {
     try {
-        if (labelObject && labelObject.hasOwnProperty('filename')) {
-            const parts = labelObject.filename.split(path.sep);
+        if (!labelObject){
+            return '';
+        }
+        if (labelObject.hasOwnProperty('filename')) {
+            const parts = (labelObject as Module).filename.split(path.sep);
             return parts[parts.length - 2] + '/' + parts.pop();
         }
-        return 'failed to get filename';
+        if (labelExtractors.indexOf(LabelExtractor.moleculer) > -1
+                && labelObject.hasOwnProperty('nodeID')
+                && labelObject.hasOwnProperty('ns')
+                && labelObject.hasOwnProperty('mod')
+        ) {
+            const nodeMeta = labelObject as MoleculerMeta;
+            return `${nodeMeta.nodeID}:${nodeMeta.ns}:${nodeMeta.mod}`;
+        }
+        return '';
     } catch (e) {
-        return 'failed to get filename';
+        return '';
     }
 };
 
-function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
+function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logger {
     const transportsProviders = [];
     if (config.console) {
         const consoleConfig = config.console;
@@ -27,10 +39,10 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             format: combine(
                     colorize({all: true}),
                     timestamp(),
-                    label({label: fileName, message: true}),
+                    label({label: instanceLabel, message: true}),
                     errors({stack: true}),
                     simple(),
-                    splat()
+                    splat(),
             ),
             handleExceptions: consoleConfig.handleExceptions !== false,
             level: <any> consoleConfig.level
@@ -46,9 +58,12 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             maxsize: fileConfig.maxSize
         }));
     }
+
     if (config.logstash) {
         const loggerConfig = config.logstash;
-        transportsProviders.push(new LogstashTransport({
+        const transport = require('@dkuida/winston-logstash');
+        const logstashTransport = transport.default;
+        transportsProviders.push(new logstashTransport({
             handleExceptions: loggerConfig.handleExceptions !== false,
             host: loggerConfig.host,
             label: config.service,
@@ -57,11 +72,17 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
             port: loggerConfig.port
         }));
     }
+    if (config.fluentd){
+        const fluentLib = require('fluent-logger');
+        const fluentTransport = fluentLib.support.winstonTransport();
+        const fluent = new fluentTransport(instanceLabel, {...config.fluentd!,  requireAckResponse: true });
+        transportsProviders.push(fluent);
+    }
     return createLogger({
         exitOnError: false,
         format: combine(
                 timestamp(),
-                label({label: fileName, message: true}),
+                label({label: instanceLabel, message: true}),
                 errors({stack: true}),
                 json(),
                 splat()
@@ -70,12 +91,12 @@ function buildLogger(config: LoggerConfig, fileName: string): winston.Logger {
     });
 }
 
-function getLogger(invokingModule: Module, config: LoggerConfig): winston.Logger {
-    const fileName = getLabel(invokingModule);
-    return buildLogger(config, fileName);
+function getLogger(invokingModule: Loggable, config: LoggerConfig): winston.Logger {
+    const instanceLabel = getLabel(invokingModule, config.labelExtractors || []);
+    return buildLogger(config, instanceLabel);
 }
 
-const logger = (config: any) => (module: Module) => {
+const logger = (config: any) => (module: Loggable) => {
     if (!config.service) {
         config.service = 'Service name not defined in log config';
     }

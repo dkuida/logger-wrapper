@@ -1,22 +1,26 @@
 {
   "name": "@dkuida/logger-wrapper",
-  "version": "1.5.2",
+  "version": "1.6.0-beta0",
   "description": "commodity wrapper ",
-  "main": "dist/logger.js",
+  "main": "logger.js",
   "scripts": {
-    "build": "npm run clean && npm run tsc && npm run copy-types",
+    "build": "npm run clean && npm run tsc",
     "example": "node ./dist/example/app.js",
     "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist",
     "test": "jest --coverage --forceExit --detectOpenHandles",
+    "copy-package-json": "copyfiles  ./package.json ./README.md ./dist/package",
+    "copy-src": "copyfiles -u 3 ./dist/compiled/src/**/*  ./dist/package/",
+    "create-package": "npm run clean && npm run tsc:dec && npm run copy-package-json && npm run copy-src",
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "tslint -p tsconfig.json --fix",
-    "clean": "rimraf dist/*",
+    "clean": "rimraf dist coverage",
     "compile": "npm run clean && npm run tsc",
-    "tsc": "tsc --declaration",
+    "tsc": "tsc",
+    "tsc:dec": "tsc --declaration",
     "ts:watch": "tsc --watch",
     "preversion": "npm run lint && npm run tsc && npm run test",
     "postversion": "git push && git push --follow-tags",
-    "deploy": "npm run build && npm version patch -m \"Release v%s\" && npm publish"
+    "deploy": "npm run build && npm run create-package && cd ./dist/package && npm publish"
   },
   "keywords": [
     "logger"
@@ -33,10 +37,7 @@
     "access": "public"
   },
   "homepage": "https://github.com/dkuida/logger-wrapper#readme",
-  "dependencies": {
-    "winston": "^3.2.1",
-    "@dkuida/winston-logstash": "^0.5.1"
-  },
+  "dependencies": {},
   "engines": {
     "node": ">=8.0.0"
   },
@@ -45,20 +46,29 @@
     "tsc",
     "test"
   ],
+  "peerDependencies": {
+    "fluent-logger": ">=2.8.0",
+    "winston": ">=3.2.1",
+    "@dkuida/winston-logstash": ">=0.5.1"
+  },
   "devDependencies": {
-    "rimraf": "^2.6.2",
-    "copyfiles": "^1.2.0",
+    "rimraf": "^2.6.3",
+    "copyfiles": "^2.1.1",
     "pre-commit": "^1.2.2",
-    "@types/node": "^8.10.48",
-    "@types/jest": "^24.0.12",
-    "jest": "^24.7.1",
+    "@types/node": "^12.7.1",
+    "@types/jest": "^24.0.17",
+    "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
-    "typescript": "^3.4.5",
+    "eslint": "^5.16.0",
+    "winston": "^3.2.1",
+    "typescript": "^3.5.3",
+    "fluent-logger": "^3.3.1",
     "tslint-eslint-rules": "^5.4.0",
+    "@dkuida/winston-logstash": "^0.5.1",
     "@typescript-eslint/parser": "^1.7.0",
-    "jest-cli": "^24.7.1"
+    "jest-cli": "^24.8.0"
   },
   "jest": {
     "testEnvironment": "node",
@@ -78,9 +88,7 @@
     "setupFiles": [],
     "moduleFileExtensions": [
       "ts",
-      "tsx",
       "js",
-      "jsx",
       "json",
       "node"
     ]

@@ -1,5 +1,5 @@
-
-# dead simple winston confiiguration loader
+[![Build Status](https://travis-ci.com/dkuida/logger-wrapper.svg?branch=master)](https://travis-ci.com/dkuida/logger-wrapper)
+# wrapper for winston configuration loader
 
 ## Build Setup
 
@@ -12,14 +12,19 @@ npm install @dkuida/logger-wrapper
 
 ### short version 
 
-check the examples folder
+check the example folder
 
 ###longer version
-create a configuration file with a property for each available transport 
+the config file will initialize the availbale transports by passing the configuration to each 
 
 * console - official winston console
+
 * file - official winston file logger
+
+* fluentd - using [fluent-logger](https://github.com/fluent/fluent-logger-node)
+
 * logstash - have a look at [winston-logstash-transport](https://github.com/dkuida/winston-logstash)
+
 * service - a common name that will be identify the project/service
 create a singleton loader in the form of 
 
@@ -29,41 +34,32 @@ create a singleton loader in the form of
  const loggerInstance = logger(loggerConfig);
  
  export default loggerInstance;
-
 ```
 
-use the logger wherever you like with
+use the logger wherever you need
 ```typescript
 import loggerInstance from './logger';
 const logger = loggerInstance(module);
 logger.info('HELLO');
 ```
 
+The label for the log message is extracted from the (module) - and is the file in which the call was invoked.
+In case you use [moleculer.js](https://moleculer.services/) you can add a property
+
+```typescript
+labelExtractors: [LabelExtractor.moleculer]
+```
+
+which allow on service call to extract the labels for the nodes/brokers
+
 ## Breaking changes
 
-* the logger is not exported as default from teh library
-* fatal level does not exist
+###### 1.6.x
+* winston, winston-logstash-transport, fluentd-logger are all peer dependencies now.
 
-## License
+###### 1.5.x
+* the logger is not exported as default from the library
+* fatal level removed
 
-The MIT License (MIT)
-
-Copyright (c) 2018 restify
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+# License
+The project is available under the [MIT license](https://tldrlegal.com/license/mit-license).
