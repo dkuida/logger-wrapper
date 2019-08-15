@@ -1,11 +1,11 @@
 {
   "name": "@dkuida/logger-wrapper",
-  "version": "1.6.0-beta3",
+  "version": "1.6.0-beta4",
   "description": "commodity wrapper ",
   "main": "logger.js",
   "scripts": {
     "build": "npm run clean && npm run tsc",
-    "example": "node ./dist/example/app.js",
+    "example": "node ./dist/compiled/example/app.js",
     "copy-types": "copyfiles -u 1 ./src/*.d.ts ./dist",
     "test": "jest --coverage --forceExit --detectOpenHandles",
     "copy-package-json": "copyfiles  ./package.json ./README.md ./dist/package",

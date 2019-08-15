@@ -5,6 +5,7 @@
     "noImplicitAny": true,
     "outDir": "./dist/compiled",
     "sourceMap": true,
+    "allowJs": true,
     "strictNullChecks": true,
     "lib": [
       "es2018",
@@ -22,7 +23,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "example/**/*.ts"
+    "example/**/*.ts",
+    "config/**/*.js"
   ],
   "exclude": [
     "node_modules",

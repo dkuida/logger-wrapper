@@ -1,3 +1,4 @@
+/* tslint:disable */
 module.exports = {
     service: 'some-service',
     console: {
@@ -6,9 +7,9 @@ module.exports = {
     file: {
         level: 'debug',
         path: './logs/server.log',
-        maxSize: 5242880,
+        maxSize: 10000,
         maxFiles: 5
-    },
+    }
     // logstash: {
     //     level: 'debug',
     //     nodeName: 'test',

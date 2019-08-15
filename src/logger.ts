@@ -10,7 +10,6 @@ import * as util from 'util';
 const {createLogger, transports, format} = winston;
 // @ts-ignore
 const {combine, timestamp, label, errors, metadata, simple, json, colorize, logstash} = format;
-// const SPLAT = Symbol('splat');
 const getLabel = (labelObject: Loggable, labelExtractors: LabelExtractor[]): string => {
     try {
         if (!labelObject) {
@@ -41,8 +40,7 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
         transportsProviders.push(new transports.Console({
             format: combine(
                     colorize({all: true}),
-                    label({label: instanceLabel}),
-
+                    label({label: instanceLabel})
             ),
             handleExceptions: consoleConfig.handleExceptions !== false,
             level: <any> consoleConfig.level
@@ -93,7 +91,7 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
                 errors({stack: true}),
                 timestamp(),
                 label({label: instanceLabel}),
-
+json()
         ),
         transports: transportsProviders
     });
