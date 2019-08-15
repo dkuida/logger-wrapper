@@ -6,7 +6,7 @@ import { Loggable, MoleculerMeta } from './types/MoleculerMeta';
 import Module = NodeJS.Module;
 
 const {createLogger, transports, format} = winston;
-const {combine, timestamp, label, errors, json, simple, colorize, splat} = format;
+const {combine, timestamp, label, metadata, errors, simple, colorize} = format;
 
 const getLabel = (labelObject: Loggable, labelExtractors: LabelExtractor[]): string => {
     try {
@@ -39,10 +39,9 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
             format: combine(
                     colorize({all: true}),
                     timestamp(),
-                    label({label: instanceLabel, message: true}),
+                    label({label: instanceLabel}),
                     errors({stack: true}),
-                    simple(),
-                    splat(),
+                    simple()
             ),
             handleExceptions: consoleConfig.handleExceptions !== false,
             level: <any> consoleConfig.level
@@ -82,10 +81,10 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
         exitOnError: false,
         format: combine(
                 timestamp(),
-                label({label: instanceLabel, message: true}),
-                errors({stack: true}),
-                json(),
-                splat()
+                // splat(),
+                label({label: instanceLabel}),
+                metadata(),
+                errors({stack: true})
         ),
         transports: transportsProviders
     });

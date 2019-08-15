@@ -15,12 +15,12 @@ module.exports = {
     //     host: '',
     //     port: 27010
     // },
-    fluentd: {
-        level: 'debug',
-        host: '192.168.2.2',
-        port: 31811,
-        timeout: 3.0,
-        reconnectInterval: 600000 // 10 minutes
-
-    }
+    // fluentd: {
+    //     level: 'debug',
+    //     host: '192.168.2.2',
+    //     port: 31811,
+    //     timeout: 3.0,
+    //     reconnectInterval: 600000 // 10 minutes
+    //
+    // }
 };
