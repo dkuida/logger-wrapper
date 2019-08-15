@@ -3,15 +3,17 @@ import * as path from 'path';
 
 import { LabelExtractor, LoggerConfig } from './types/loggerConfig';
 import { Loggable, MoleculerMeta } from './types/MoleculerMeta';
+import { SPLAT } from 'triple-beam';
 import Module = NodeJS.Module;
+import * as util from 'util';
 
 const {createLogger, transports, format} = winston;
 // @ts-ignore
-const {combine, timestamp, label, errors, metadata,simple, json ,splat, colorize, logstash} = format;
-
+const {combine, timestamp, label, errors, metadata, simple, json, colorize, logstash} = format;
+// const SPLAT = Symbol('splat');
 const getLabel = (labelObject: Loggable, labelExtractors: LabelExtractor[]): string => {
     try {
-        if (!labelObject){
+        if (!labelObject) {
             return '';
         }
         if (labelObject.hasOwnProperty('filename')) {
@@ -38,12 +40,8 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
         const consoleConfig = config.console;
         transportsProviders.push(new transports.Console({
             format: combine(
-                    // metadata(),
-                    errors({stack: true}),
                     colorize({all: true}),
-                    timestamp(),
                     label({label: instanceLabel}),
-                    // logstash()
 
             ),
             handleExceptions: consoleConfig.handleExceptions !== false,
@@ -74,21 +72,28 @@ function buildLogger(config: LoggerConfig, instanceLabel: string): winston.Logge
             port: loggerConfig.port
         }));
     }
-    if (config.fluentd){
+    if (config.fluentd) {
         const fluentLib = require('fluent-logger');
         const fluentTransport = fluentLib.support.winstonTransport();
-        const fluent = new fluentTransport(instanceLabel, {...config.fluentd!,  requireAckResponse: true });
+        const fluent = new fluentTransport(instanceLabel, {...config.fluentd!, requireAckResponse: true});
         transportsProviders.push(fluent);
     }
     return createLogger({
         exitOnError: false,
         format: combine(
+                winston.format((info: any, _opts: any) => {
+                    if (info[SPLAT] && info[SPLAT].length > 0) {
+                        const formatMessage = `${info.message} ${info[SPLAT].map((messagePart: string | object) =>
+                                typeof messagePart === 'object' ? '%o' : '%s').join(' ')}`;
+                        info.message += util.format(formatMessage, ...info[SPLAT]);
+                    }
+                    return info;
+                })(),
+                metadata(),
+                errors({stack: true}),
                 timestamp(),
-        // splat(),
-        //         // logstash(),
                 label({label: instanceLabel}),
-        //         metadata(),
-                errors({stack: true})
+
         ),
         transports: transportsProviders
     });

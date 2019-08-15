@@ -2,32 +2,26 @@ import { LabelExtractor } from '../src/types/loggerConfig';
 import * as winston from 'winston';
 import * as loggerConfig from './config/logger';
 
-/* tslint:disable: only-arrow-functions object-literal-shorthand */
-const transportsMock = {
-    Console: function() {
-        return consoleLoggerMock;
-    }
-};
-/* tslint:enable: only-arrow-functions object-literal-shorthand */
-// @ts-ignore
-winston.transports = transportsMock;
-
 const consoleLoggerMock = {
-    log: jest.fn(),
-    on: jest.fn()
+    log: jest.fn()
 };
-// import loggerBuilder from '../src/logger';
+/* tslint:disable: only-arrow-functions object-literal-shorthand */
+
+class Console extends winston.transports.Console {
+    public log = consoleLoggerMock.log;
+}
+
+// @ts-ignore
+winston.transports = {Console};
+
 describe('Console logger', () => {
-    // const loggerBuilder = (await import ('../src/logger')).default;
-    // const loggerInstance = loggerBuilder(loggerConfig);
-    let logger: any;// = loggerInstance(module);
+    let logger: any;
 
     beforeEach(async () => {
+        consoleLoggerMock.log.mockClear();
         const loggerBuilder = (await import ('../src/logger')).default;
         const loggerInstance = loggerBuilder(loggerConfig);
         logger = loggerInstance(module);
-
-        consoleLoggerMock.log.mockClear();
     });
     test('level to be defined', () => {
         expect(logger.error).toBeDefined();
@@ -37,54 +31,65 @@ describe('Console logger', () => {
         expect(logger.debug).toBeDefined();
         expect(logger.silly).toBeDefined();
     });
-    test('expect logger called', () => {
+    test('expect string to pass', () => {
         // arrange
         // act
-        logger.info('HELLO');
+        logger.info('foo');
         // assert
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', expect.stringContaining('HELLO'),
-                expect.anything(), expect.anything());
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: expect.stringMatching('foo')
+                }),
+                expect.anything());
     });
     test('object passed', () => {
         logger.info({foo: 'bar'});
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', {foo: 'bar'},
-                expect.anything(), expect.anything());
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: expect.stringMatching('{ foo: \'bar\' }')
+                }),
+                expect.anything());
     });
     test('many params', () => {
         logger.info(' this', 'is many', 'params', 'passed', 'to', 'logger');
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        const splatSymbol = Symbol('splat');
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', ' this',
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    [splatSymbol]: [
-                        'is many',
-                        'params',
-                        'passed',
-                        'to',
-                        'logger',
-                    ]
+                    message: expect.stringMatching(' this is many params passed to logger')
                 }),
                 expect.anything()
         );
     });
-    test('many params', () => {
-        logger.info(' this', ' error');
+    test('two params', () => {
+        logger.warn('this', 'error');
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        const splatSymbol = Symbol('splat');
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', ' this',
-                expect.objectContaining({[splatSymbol]: [' error']}),
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.objectContaining({
+                    level: expect.stringMatching('warn'),
+                    message: expect.stringMatching('this error')
+                }),
+                expect.anything()
+        );
+    });
+    test('many params with objects', () => {
+        logger.info(' this', 'is many', {foo: 'bar'}, 'passed', 2, 'logger');
+        expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: expect.stringMatching(' this is many { foo: \'bar\' } passed 2 logger')
+                }),
                 expect.anything()
         );
     });
     test('expect error to be handled', () => {
         logger.error(new Error('foo'));
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith('error', expect.stringContaining('foo'),
-                expect.objectContaining({
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.objectContaining({
+                    message: expect.stringMatching('foo'),
                     stack: expect.anything()
-                }), expect.anything());
+                }),
+                 expect.anything());
     });
 });
 describe('label-extractors', () => {
@@ -100,8 +105,8 @@ describe('label-extractors', () => {
         });
         const logger = loggerInstance(module);
         logger.warn('foobar');
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
-                'foobar', expect.objectContaining({
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                expect.objectContaining({
                     label: expect.stringMatching(/test\/logger.test.[j|t]s/)
                 }), expect.anything());
     });
@@ -115,8 +120,8 @@ describe('label-extractors', () => {
         });
         const logger = loggerInstance({nodeID: 'node1', ns: 'space', mod: 'broker'});
         logger.warn('foobar');
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
-                'foobar', expect.objectContaining({
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                expect.objectContaining({
                     label: 'node1:space:broker'
                 }), expect.anything());
     });
@@ -129,8 +134,8 @@ describe('label-extractors', () => {
         });
         const logger = loggerInstance({nodeID: 'node1', ns: 'space', mod: 'broker'});
         logger.warn('foobar');
-        expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
-                'foobar', expect.objectContaining({
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith(
+                 expect.objectContaining({
                     label: ''
                 }), expect.anything());
     });
