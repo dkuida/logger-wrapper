@@ -69,6 +69,15 @@ describe('Console logger', () => {
                 expect.anything()
         );
     });
+    test('many params', () => {
+        logger.info(' this', ' error');
+        expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
+        const splatSymbol = Symbol('splat');
+        expect(consoleLoggerMock.log).toHaveBeenCalledWith('info', ' this',
+                expect.objectContaining({[splatSymbol]: [' error']}),
+                expect.anything()
+        );
+    });
     test('expect error to be handled', () => {
         logger.error(new Error('foo'));
         expect(consoleLoggerMock.log).toHaveBeenCalledTimes(1);
@@ -93,11 +102,7 @@ describe('label-extractors', () => {
         logger.warn('foobar');
         expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
                 'foobar', expect.objectContaining({
-                    metadata:
-                            expect.objectContaining({
-                                label:
-                                        expect.stringMatching(/test\/logger.test.[j|t]s/)
-                            })
+                    label: expect.stringMatching(/test\/logger.test.[j|t]s/)
                 }), expect.anything());
     });
     test('Given moleculer extractor - extract module', async () => {
@@ -112,8 +117,7 @@ describe('label-extractors', () => {
         logger.warn('foobar');
         expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
                 'foobar', expect.objectContaining({
-                    metadata:
-                            expect.objectContaining({label: 'node1:space:broker'})
+                    label: 'node1:space:broker'
                 }), expect.anything());
     });
     test('Given no moleculer extractor - extract empty', async () => {
@@ -127,8 +131,7 @@ describe('label-extractors', () => {
         logger.warn('foobar');
         expect(consoleLoggerMock.log).toHaveBeenCalledWith(expect.anything(),
                 'foobar', expect.objectContaining({
-                    metadata:
-                            expect.objectContaining({label: ''})
+                    label: ''
                 }), expect.anything());
     });
 });
